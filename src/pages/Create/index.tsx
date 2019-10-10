@@ -1,8 +1,15 @@
 import React from 'react';
-import { View } from 'react-native';
+import { Text } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 // import { Container } from './styles';
 
 export default function Create() {
-  return <View />;
+  return <Text>Create</Text>;
 }
+
+Create.navigationOptions = {
+  tabBarIcon: ({ tintColor }) => (
+    <Icon name="library-add" size={20} color={tintColor} />
+  ),
+};
