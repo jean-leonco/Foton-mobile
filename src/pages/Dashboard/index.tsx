@@ -17,9 +17,11 @@ import {
 
 export default function Dashboard() {
   const [search, setSearch] = useState('');
+
   return (
     <Container>
       <Title>Dashboard</Title>
+
       <Actions>
         <Search>
           <Icon name="search" size={22} color="#333" />

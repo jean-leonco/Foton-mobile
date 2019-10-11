@@ -19,11 +19,12 @@ export const Form = styled.ScrollView.attrs({
   showsVerticalScrollIndicator: false,
 })`
   align-self: stretch;
-  margin-top: 50px;
+  margin-top: 25px;
+  padding: 10px;
 `;
 
 export const TInput: any = styled(Input)`
-  margin-top: 20px;
+  margin-bottom: 20px;
 `;
 
 export const SubmitButton = styled(Button)`

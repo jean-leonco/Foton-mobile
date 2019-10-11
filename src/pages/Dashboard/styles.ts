@@ -7,7 +7,7 @@ export const Container = styled.SafeAreaView`
 `;
 
 export const Title = styled.Text`
-  font-size: 30px;
+  font-size: 25px;
   font-weight: bold;
   color: #333;
 `;
@@ -15,7 +15,7 @@ export const Title = styled.Text`
 export const Actions = styled.View`
   flex-direction: row;
   justify-content: space-between;
-  margin: 10px 0;
+  margin: 25px 0 10px;
 `;
 
 export const Search = styled.View`
@@ -39,7 +39,7 @@ export const Input = styled.TextInput`
 export const Clear = styled.TouchableOpacity`
   background: #4b3bff;
   height: 45px;
-  width: 45px;
+  width: 50px;
   border-radius: 4px;
   margin-left: 5px;
 
