@@ -28,5 +28,5 @@ export const TInput: any = styled(Input)`
 `;
 
 export const SubmitButton = styled(Button)`
-  margin-top: 40px;
+  margin-top: 20px;
 `;

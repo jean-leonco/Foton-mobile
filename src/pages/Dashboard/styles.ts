@@ -30,9 +30,12 @@ export const Search = styled.View`
   border-radius: 4px;
 `;
 
-export const Input = styled.TextInput`
+export const Input = styled.TextInput.attrs({
+  placeholderTextColor: '#999',
+})`
   width: 100%;
   font-size: 16px;
+  color: rgba(0, 0, 0, 0.7);
   padding: 0 10px;
 `;
 
@@ -47,6 +50,7 @@ export const Clear = styled.TouchableOpacity`
   justify-content: center;
 `;
 
+// @ts-ignore
 export const ProductList = styled.FlatList.attrs({
   showsVerticalScrollIndicator: false,
 })`
