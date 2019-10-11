@@ -1,11 +1,14 @@
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
+import { createStackNavigator } from 'react-navigation-stack';
 
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 
 import Dashboard from './pages/Dashboard';
 import Create from './pages/Create';
+
+import Details from './pages/Details';
 
 export default (isAuth = false) =>
   createAppContainer(
@@ -30,6 +33,24 @@ export default (isAuth = false) =>
                 height: 60,
                 backgroundColor: '#fff',
                 borderTopWidth: 0,
+              },
+            },
+          },
+        ),
+        Details: createStackNavigator(
+          {
+            Details,
+          },
+          {
+            defaultNavigationOptions: {
+              headerTransparent: true,
+              headerTitleStyle: {
+                color: '#333',
+                fontSize: 25,
+                fontWeight: 'bold',
+              },
+              headerLeftContainerStyle: {
+                marginLeft: 10,
               },
             },
           },
