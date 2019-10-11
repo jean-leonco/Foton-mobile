@@ -1,23 +1,25 @@
 import styled from 'styled-components/native';
 
 export const Container = styled.View`
-  padding: 0 0 5px;
-
   flex-direction: column;
-
-  border-bottom-color: #999;
-  border-bottom-width: 1px;
 `;
 
 export const Label = styled.Text`
   font-size: 18px;
-  color: #999;
+  color: #333;
+
+  margin-bottom: 5px;
 `;
 
 export const TInput = styled.TextInput.attrs({
-  placeholderTextColor: '#333',
+  placeholderTextColor: '#999',
 })`
-  flex: 1;
-  font-size: 18px;
-  color: #333;
+  height: 44px;
+  color: rgba(0, 0, 0, 0.7);
+  font-size: 16px;
+
+  border: 1px solid #ddd;
+  border-radius: 4px;
+
+  padding: 0 10px;
 `;
