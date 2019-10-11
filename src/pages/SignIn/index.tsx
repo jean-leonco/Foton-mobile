@@ -38,7 +38,6 @@ export default function SignIn({ navigation }) {
 
       <Form>
         <TInput
-          icon="mail-outline"
           keyboardType="email-address"
           autoCorrect={false}
           autoCapitalize="none"
@@ -51,7 +50,6 @@ export default function SignIn({ navigation }) {
         />
 
         <TInput
-          icon="lock-outline"
           secureTextEntry
           placeholder="Your password"
           label="Password"

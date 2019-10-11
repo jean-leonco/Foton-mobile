@@ -41,7 +41,6 @@ export default function SignUp({ navigation }) {
 
       <Form>
         <TInput
-          icon="mail-outline"
           autoCorrect={false}
           autoCapitalize="none"
           placeholder="Full name"
@@ -53,7 +52,6 @@ export default function SignUp({ navigation }) {
         />
 
         <TInput
-          icon="mail-outline"
           keyboardType="email-address"
           autoCorrect={false}
           autoCapitalize="none"
@@ -67,7 +65,6 @@ export default function SignUp({ navigation }) {
         />
 
         <TInput
-          icon="lock-outline"
           secureTextEntry
           placeholder="Your password"
           label="Password"
