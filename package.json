@@ -18,6 +18,7 @@
     "react-navigation": "^4.0.10",
     "react-navigation-stack": "^1.9.4",
     "react-navigation-tabs": "^2.5.6",
+    "reactotron-react-native": "^4.0.2",
     "styled-components": "^4.4.0"
   },
   "devDependencies": {
