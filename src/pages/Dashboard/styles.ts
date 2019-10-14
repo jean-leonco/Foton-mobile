@@ -4,6 +4,7 @@ import { RectButton } from 'react-native-gesture-handler';
 export const Container = styled.SafeAreaView`
   flex: 1;
   padding: 20px;
+  background: #fff;
 `;
 
 export const Title = styled.Text`
