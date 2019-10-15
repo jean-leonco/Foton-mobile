@@ -3,8 +3,8 @@ import createRouter from './Routes';
 import { useQuery } from '@entria/relay-experimental';
 import { graphql } from 'react-relay';
 import ErrorBoundaryWithRetry from './relay/ErrorBoundaryWithRetry';
-import LoadingScreen from './components/LoadingScreen';
-import ErrorScreen from './components/ErrorScreen';
+import LoadingScreen from './modules/LoadingScreen';
+import ErrorScreen from './modules/ErrorScreen';
 
 export default function App() {
   const isAuth = true;

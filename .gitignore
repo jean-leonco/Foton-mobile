@@ -67,3 +67,4 @@ buck-out/
 # Relay
 
 **/__generated__/**
+data/

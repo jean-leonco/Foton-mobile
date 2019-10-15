@@ -1,12 +1,31 @@
 import React, { useEffect } from 'react';
 import { ActivityIndicator, Animated } from 'react-native';
+import { RectButton } from 'react-native-gesture-handler';
+import styled from 'styled-components/native';
 import PropTypes from 'prop-types';
 
-import { Container, Text } from './styles';
+//  ### STYLES
+
+const Container = styled(RectButton)`
+  height: 45px;
+  background: #4b3bff;
+  border-radius: 4px;
+
+  justify-content: center;
+  align-items: center;
+`;
+
+const Text = styled.Text`
+  color: #fff;
+  font-size: 18px;
+  font-weight: bold;
+`;
 
 const opacity = new Animated.Value(0.5);
 
 const AnimatedContainer = Animated.createAnimatedComponent(Container);
+
+//  ### JSX
 
 export default function Button({ style, children, loading, empty, ...rest }) {
   const enable = Animated.timing(opacity, {

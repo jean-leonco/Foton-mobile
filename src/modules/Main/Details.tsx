@@ -1,8 +1,41 @@
 import React from 'react';
 import { TouchableOpacity } from 'react-native';
+import styled from 'styled-components/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-import { Container, Title, Info, Statement, Data } from './styles';
+//  ### STYLES
+
+const Container = styled.View`
+  flex: 1;
+  padding: 20px;
+  margin-top: 50px;
+`;
+
+const Title = styled.Text`
+  color: #333;
+  font-size: 25px;
+  font-weight: bold;
+`;
+
+const Info = styled.View`
+  margin-top: 10px;
+
+  flex-direction: row;
+  align-items: center;
+`;
+
+const Statement = styled.Text`
+  color: #666;
+  font-size: 18px;
+`;
+
+const Data = styled.Text`
+  color: #333;
+  font-size: 16px;
+  font-weight: bold;
+`;
+
+//  ### JSX
 
 export default function Details() {
   return (

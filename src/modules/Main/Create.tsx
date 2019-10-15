@@ -1,12 +1,46 @@
-import React from 'react';
-import { useState, useRef, useMemo } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
+import { TextInput } from 'react-native';
+import styled from 'styled-components/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-import { Container, Title, Form, TInput, SubmitButton } from './styles';
+import Input from '../Input';
+import Button from '../Button';
+
+//  ### STYLES
+
+const Container = styled.View`
+  flex: 1;
+  padding: 20px;
+`;
+
+const Title = styled.Text`
+  font-size: 25px;
+  align-self: flex-start;
+  font-weight: bold;
+  color: #333;
+`;
+
+const Form = styled.ScrollView.attrs({
+  showsVerticalScrollIndicator: false,
+})`
+  align-self: stretch;
+  margin-top: 25px;
+  padding: 10px;
+`;
+
+const TInput: any = styled(Input)`
+  margin-bottom: 20px;
+`;
+
+const SubmitButton = styled(Button)`
+  margin-top: 20px;
+`;
+
+//  ### JSX
 
 export default function Create() {
-  const priceRef = useRef<any>();
-  const descriptionRef = useRef<any>();
+  const priceRef = useRef<TextInput>();
+  const descriptionRef = useRef<TextInput>();
 
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -41,7 +75,9 @@ export default function Create() {
           placeholder="Product name"
           label="Name"
           returnKeyType="next"
-          onSubmitEditing={() => descriptionRef.current.focus()}
+          onSubmitEditing={() =>
+            descriptionRef.current && descriptionRef.current.focus()
+          }
           value={name}
           onChangeText={setName}
         />
@@ -54,7 +90,7 @@ export default function Create() {
           label="Description"
           ref={descriptionRef}
           returnKeyType="next"
-          onSubmitEditing={() => priceRef.current.focus()}
+          onSubmitEditing={() => priceRef.current && priceRef.current.focus()}
           value={description}
           onChangeText={setDescription}
         />

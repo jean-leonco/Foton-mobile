@@ -2,13 +2,13 @@ import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import { createStackNavigator } from 'react-navigation-stack';
 
-import SignIn from './pages/SignIn';
-import SignUp from './pages/SignUp';
+import SignIn from './modules/Auth/SignIn';
+import SignUp from './modules/Auth/SignUp';
 
-import Dashboard from './pages/Dashboard';
-import Create from './pages/Create';
+import Dashboard from './modules/Main/Dashboard/DashboardRoot';
+import Create from './modules/Main/Create';
 
-import Details from './pages/Details';
+import Details from './modules/Main/Details';
 
 export default (isAuth = false) =>
   createAppContainer(
