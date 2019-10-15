@@ -3,7 +3,8 @@ import createRouter from './Routes';
 import { useQuery } from '@entria/relay-experimental';
 import { graphql } from 'react-relay';
 import ErrorBoundaryWithRetry from './relay/ErrorBoundaryWithRetry';
-import { Text } from 'react-native';
+import LoadingScreen from './components/LoadingScreen';
+import ErrorScreen from './components/ErrorScreen';
 
 export default function App() {
   const isAuth = true;
@@ -25,9 +26,9 @@ export default function App() {
       return (
         //@ts-ignore
         <ErrorBoundaryWithRetry
-          fallback={error => <Text>{error.message}</Text>}
+          fallback={error => <ErrorScreen error={error.message} />}
         >
-          <React.Suspense fallback={<Text>loading</Text>}>
+          <React.Suspense fallback={<LoadingScreen />}>
             <Root />
           </React.Suspense>
         </ErrorBoundaryWithRetry>

@@ -1,5 +1,5 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Animated } from 'react-native';
 import {
   useRelayEnvironment,
   useFragment,
@@ -28,8 +28,29 @@ type Props = {
   products: Dashboard_products;
 };
 
+const opacity = new Animated.Value(0);
+const offset = new Animated.ValueXY({ x: 250, y: 0 });
+
+const AnimatedList = Animated.createAnimatedComponent(ProductList);
+
 function Dashboard(props: Props) {
   const [search, setSearch] = useState('');
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(offset.x, {
+        toValue: 0,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+
+      Animated.timing(opacity, {
+        toValue: 1,
+        duration: 1000,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
 
   const products = useFragment(
     graphql`
@@ -73,7 +94,11 @@ function Dashboard(props: Props) {
         </Clear>
       </Actions>
 
-      <ProductList
+      <AnimatedList
+        style={[
+          { transform: [...offset.getTranslateTransform()] },
+          { opacity },
+        ]}
         data={[1, 2, 3]}
         keyExtractor={(item: Number) => String(item)}
         renderItem={({ item }) => (

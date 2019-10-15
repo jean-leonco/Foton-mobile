@@ -1,19 +1,50 @@
-import React from 'react';
-import { ActivityIndicator } from 'react-native';
+import React, { useEffect } from 'react';
+import { ActivityIndicator, Animated } from 'react-native';
 import PropTypes from 'prop-types';
 
 import { Container, Text } from './styles';
 
-export default function Button({ children, loading, empty, ...rest }) {
+const opacity = new Animated.Value(0.5);
+
+const AnimatedContainer = Animated.createAnimatedComponent(Container);
+
+export default function Button({ style, children, loading, empty, ...rest }) {
+  const enable = Animated.timing(opacity, {
+    toValue: 1,
+    duration: 100,
+  });
+
+  const disable = Animated.timing(opacity, {
+    toValue: 0.5,
+    duration: 200,
+  });
+
+  useEffect(() => {
+    if (!empty) {
+      enable.start();
+    } else if (empty) {
+      disable.start();
+    } else if (!loading) {
+      enable.start();
+    } else if (loading) {
+      disable.stop();
+    }
+  }, [empty, loading]);
+
   return (
     //@ts-ignore
-    <Container {...rest} empty={empty} enabled={!loading && !empty}>
+    <AnimatedContainer
+      {...rest}
+      empty={empty}
+      enabled={!loading && !empty}
+      style={[...style, { opacity }]}
+    >
       {loading ? (
         <ActivityIndicator size="small" color="#fff" />
       ) : (
         <Text>{children}</Text>
       )}
-    </Container>
+    </AnimatedContainer>
   );
 }
 
