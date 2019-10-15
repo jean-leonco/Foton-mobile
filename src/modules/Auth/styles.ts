@@ -1,7 +1,7 @@
 import styled from 'styled-components/native';
 
-import Input from '../../components/Input';
-import Button from '../../components/Button';
+import Input from '../Input';
+import Button from '../Button';
 
 export const Container = styled.ScrollView.attrs({
   showsVerticalScrollIndicator: false,
