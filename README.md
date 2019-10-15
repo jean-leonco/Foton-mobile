@@ -7,7 +7,7 @@ This app is the mobile version of the [Foton challenge](https://github.com/Foton
 Choose a folder to save the project and clone the repository:
 
 ```sh
-git clone https://github.com/jean-leonco/meetapp-web
+git clone https://github.com/jean-leonco/Foton-mobile
 ```
 
 ### Prerequisites
