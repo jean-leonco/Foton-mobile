@@ -14,7 +14,7 @@ export const Label = styled.Text`
 export const TInput = styled.TextInput.attrs({
   placeholderTextColor: '#999',
 })`
-  height: 44px;
+  height: 45px;
   color: rgba(0, 0, 0, 0.7);
   font-size: 16px;
 

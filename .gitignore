@@ -62,3 +62,8 @@ buck-out/
 
 # CocoaPods
 /ios/Pods/
+
+
+# Relay
+
+**/__generated__/**

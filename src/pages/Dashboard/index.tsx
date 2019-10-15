@@ -1,6 +1,14 @@
 import React from 'react';
 import { useState } from 'react';
+import {
+  useRelayEnvironment,
+  useFragment,
+  useQuery,
+} from '@entria/relay-experimental';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { graphql, RelayProp } from 'react-relay';
+
+import { Dashboard_products } from './__generated__/Dashboard_products.graphql';
 
 import {
   Container,
@@ -15,8 +23,34 @@ import {
   CreatedAt,
 } from './styles';
 
-export default function Dashboard() {
+type Props = {
+  relay: RelayProp;
+  products: Dashboard_products;
+};
+
+function Dashboard(props: Props) {
   const [search, setSearch] = useState('');
+
+  const products = useFragment(
+    graphql`
+      fragment Dashboard_products on Query {
+        products(first: 10) @connection(key: "Dashboard_products") {
+          edges {
+            node {
+              id
+              name
+              description
+            }
+          }
+          pageInfo {
+            hasNextPage
+            startCursor
+          }
+        }
+      }
+    `,
+    props.products,
+  );
 
   return (
     <Container>
@@ -52,6 +86,8 @@ export default function Dashboard() {
     </Container>
   );
 }
+
+export default Dashboard;
 
 Dashboard.navigationOptions = {
   tabBarIcon: ({ tintColor }) => (

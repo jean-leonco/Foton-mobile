@@ -6,7 +6,10 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "start": "react-native start",
-    "test": "jest"
+    "test": "jest",
+    "get-schema": "node scripts/getSchema.js",
+    "relay": "relay-compiler --src ./src --schema data/schema.graphql --language typescript",
+    "relay:watch": "yarn relay --watch"
   },
   "dependencies": {
     "@types/styled-components": "^4.1.19",
@@ -18,21 +21,33 @@
     "react-navigation": "^4.0.10",
     "react-navigation-stack": "^1.9.4",
     "react-navigation-tabs": "^2.5.6",
+    "react-relay": "^6.0.0",
+    "reactotron-react-native": "^4.0.2",
+    "relay": "^0.8.0-1",
+    "relay-runtime": "^6.0.0",
     "styled-components": "^4.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.6.2",
     "@babel/runtime": "^7.6.2",
     "@react-native-community/eslint-config": "^0.0.5",
+    "@types/entria__relay-experimental": "^6.0.0",
     "@types/jest": "^24.0.18",
     "@types/react": "16.9.0",
     "@types/react-native": "^0.60.17",
+    "@types/react-relay": "^6.0.1",
     "@types/react-test-renderer": "16.9.0",
     "babel-jest": "^24.9.0",
+    "babel-plugin-relay": "^6.0.0",
+    "graphql": "^14.5.8",
+    "graphql-compiler": "^1.7.0",
     "jest": "^24.9.0",
     "metro-react-native-babel-preset": "^0.56.0",
     "react-test-renderer": "16.9.0",
-    "typescript": "^3.6.3"
+    "relay-compiler": "^6.0.0",
+    "relay-compiler-language-typescript": "^6.0.0",
+    "relay-devtools": "^1.4.0",
+    "typescript": "^3.6.4"
   },
   "jest": {
     "preset": "react-native",
