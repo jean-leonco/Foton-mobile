@@ -1,5 +1,7 @@
 import React from 'react';
+import localStorage from '@react-native-community/async-storage';
 import { useState, useRef, useMemo } from 'react';
+import { showMessage } from 'react-native-flash-message';
 
 import {
   Container,
@@ -10,6 +12,8 @@ import {
   SignLink,
   SignLinkText,
 } from './styles';
+
+import UserRegisterWithEmailMutation from './mutation/UserRegisterWithEmailMutation';
 
 const logo = require('../../assets/logo.png');
 
@@ -31,8 +35,40 @@ export default function SignUp({ navigation }) {
     }
   }, [name, email, password]);
 
+  async function handleResponse(token: string | null, error: string | null) {
+    if (token) {
+      await localStorage.setItem('token', token);
+      navigation.navigate('Dashboard');
+    } else {
+      showMessage({
+        message: 'Registration failed',
+        description: error as string,
+        type: 'danger',
+        icon: 'info',
+      });
+    }
+  }
+
   function handleSubmit() {
     if (empty) return;
+
+    UserRegisterWithEmailMutation.commit(
+      { name, email, password },
+      ({ UserRegisterWithEmail }) =>
+        UserRegisterWithEmail &&
+        handleResponse(
+          UserRegisterWithEmail.token,
+          UserRegisterWithEmail.error,
+        ),
+
+      error =>
+        showMessage({
+          message: 'Registration failed',
+          description: error.message,
+          type: 'danger',
+          icon: 'info',
+        }),
+    );
   }
 
   return (

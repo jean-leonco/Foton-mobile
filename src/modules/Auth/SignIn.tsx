@@ -1,5 +1,9 @@
 import React from 'react';
+import localStorage from '@react-native-community/async-storage';
 import { useState, useRef, useMemo } from 'react';
+import { showMessage } from 'react-native-flash-message';
+
+import UserLoginWithEmailMutation from './mutation/UserLoginWithEmailMutation';
 
 import {
   Container,
@@ -19,6 +23,7 @@ export default function SignIn({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [empty, setEmpty] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useMemo(() => {
     if (!email || !password) {
@@ -28,8 +33,44 @@ export default function SignIn({ navigation }) {
     }
   }, [email, password]);
 
-  function handleSubmit() {
+  async function handleResponse(token: string | null, error: string | null) {
+    if (token) {
+      await localStorage.setItem('token', token);
+
+      setLoading(false);
+
+      navigation.navigate('Dashboard');
+    } else {
+      setLoading(false);
+
+      showMessage({
+        message: 'Login failed',
+        description: error as string,
+        type: 'danger',
+        icon: 'info',
+      });
+    }
+  }
+
+  async function handleSubmit() {
     if (empty) return;
+
+    setLoading(true);
+
+    await UserLoginWithEmailMutation.commit(
+      { email, password },
+      ({ UserLoginWithEmail }) =>
+        UserLoginWithEmail &&
+        handleResponse(UserLoginWithEmail.token, UserLoginWithEmail.error),
+
+      error =>
+        showMessage({
+          message: 'Registration failed',
+          description: error.message,
+          type: 'danger',
+          icon: 'info',
+        }),
+    );
   }
 
   return (
@@ -60,7 +101,7 @@ export default function SignIn({ navigation }) {
           onChangeText={setPassword}
         />
 
-        <SubmitButton loading={false} empty={empty} onPress={handleSubmit}>
+        <SubmitButton loading={loading} empty={empty} onPress={handleSubmit}>
           Login
         </SubmitButton>
       </Form>
