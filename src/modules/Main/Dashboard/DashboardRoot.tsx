@@ -4,11 +4,11 @@ import styled from 'styled-components/native';
 
 import { graphql, QueryRenderer } from 'react-relay';
 
-import DashboardSearch from './DashboardSearch';
 import DashboardList from './DashboardList';
 import env from '../../../relay/Environment';
 import ErrorScreen from '../../ErrorScreen';
 import LoadingScreen from '../../LoadingScreen';
+import SearchInput from '../../SearchInput';
 
 //  ### STYLES
 
@@ -31,15 +31,13 @@ function DashboardRoot(props) {
     <Container>
       <Title>Dashboard</Title>
 
-      <DashboardSearch />
-
       <DashboardList {...props} />
     </Container>
   );
 }
 
 const query = graphql`
-  query DashboardRootQuery {
+  query DashboardRootQuery($count: Int!, $cursor: String, $search: String) {
     ...DashboardList_query
   }
 `;
@@ -49,6 +47,7 @@ function DashboardRootWrapper({ navigation }) {
     //@ts-ignore
     <QueryRenderer
       environment={env}
+      variables={{ count: 5 }}
       query={query}
       render={({ error, props }) => {
         if (error) {

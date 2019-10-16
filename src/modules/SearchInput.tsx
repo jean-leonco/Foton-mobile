@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import styled from 'styled-components/native';
+import { RelayPaginationProp } from 'react-relay';
 
 //  ### STYLES
 
@@ -44,8 +45,12 @@ const Clear = styled.TouchableOpacity`
 
 //  ### JSX
 
-export default function DashboardSearch() {
+export default function SearchInput({ searchFunction }) {
   const [search, setSearch] = useState('');
+
+  useEffect(() => {
+    searchFunction(search);
+  }, [search]);
 
   return (
     <Actions>
@@ -60,7 +65,7 @@ export default function DashboardSearch() {
         />
       </Search>
 
-      <Clear>
+      <Clear onPress={() => setSearch('')}>
         <Icon name="clear" size={22} color="#fff" />
       </Clear>
     </Actions>
