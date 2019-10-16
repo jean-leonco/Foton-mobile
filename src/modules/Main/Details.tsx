@@ -2,6 +2,14 @@ import React from 'react';
 import { TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { useQuery } from '@entria/relay-experimental';
+import { graphql } from 'react-relay';
+
+import { DetailsQueryResponse } from './__generated__/DetailsQuery.graphql';
+
+import ErrorBoundaryWithRetry from '../../relay/ErrorBoundaryWithRetry';
+import ErrorScreen from '../ErrorScreen';
+import LoadingScreen from '../LoadingScreen';
 
 //  ### STYLES
 
@@ -37,19 +45,36 @@ const Data = styled.Text`
 
 //  ### JSX
 
-export default function Details() {
+function Details({ navigation }) {
+  const id = navigation.getParam('id');
+
+  const response: DetailsQueryResponse | any = useQuery(
+    graphql`
+      query DetailsQuery($id: ID!) {
+        product(id: $id) {
+          name
+          description
+          price
+        }
+      }
+    `,
+    { id },
+  );
+
+  const { product } = response;
+
   return (
     <Container>
-      <Title>Product name</Title>
+      <Title>{product.name}</Title>
 
       <Info>
         <Statement>Description: </Statement>
-        <Data>A new Product</Data>
+        <Data>{product.description}</Data>
       </Info>
 
       <Info>
         <Statement>Price: </Statement>
-        <Data>$10.0</Data>
+        <Data>${product.price}</Data>
       </Info>
 
       <Info>
@@ -60,7 +85,22 @@ export default function Details() {
   );
 }
 
-Details.navigationOptions = ({ navigation }) => ({
+function DetailsWrapper(props) {
+  return (
+    //@ts-ignore
+    <ErrorBoundaryWithRetry
+      fallback={error => <ErrorScreen error={error.message} />}
+    >
+      <React.Suspense fallback={<LoadingScreen />}>
+        <Details {...props} />
+      </React.Suspense>
+    </ErrorBoundaryWithRetry>
+  );
+}
+
+export default DetailsWrapper;
+
+DetailsWrapper.navigationOptions = ({ navigation }) => ({
   headerTitle: 'Information',
   headerLeft: () => (
     <TouchableOpacity onPress={() => navigation.navigate('Dashboard')}>

@@ -5,6 +5,9 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import Input from '../Input';
 import Button from '../Button';
+import Slider from '../Slider';
+import CreateProductMutation from './mutation/CreateProductMutation';
+import { showMessage } from 'react-native-flash-message';
 
 //  ### STYLES
 
@@ -32,21 +35,25 @@ const TInput: any = styled(Input)`
   margin-bottom: 20px;
 `;
 
+const PSlider = styled(Slider)`
+  margin-bottom: 20px;
+`;
+
 const SubmitButton = styled(Button)`
   margin-top: 20px;
 `;
 
 //  ### JSX
 
-export default function Create() {
-  const priceRef = useRef<TextInput>();
+export default function Create({ navigation }) {
   const descriptionRef = useRef<TextInput>();
 
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [price, setPrice] = useState('');
+  const [price, setPrice] = useState(0);
 
   const [empty, setEmpty] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useMemo(() => {
     if (!name || !description || !price) {
@@ -56,12 +63,43 @@ export default function Create() {
     }
   }, [name, description, price]);
 
-  useMemo(() => {
-    setPrice(price.replace(',', '.'));
-  }, [price]);
+  function handleResponse(product, error) {
+    setLoading(false);
+
+    if (product) {
+      navigation.navigate('Details', { id: product.id });
+    } else {
+      showMessage({
+        message: 'Creation failed',
+        description: error as string,
+        type: 'danger',
+        icon: 'info',
+      });
+    }
+  }
 
   function handleSubmit() {
     if (empty) return;
+
+    setLoading(true);
+
+    CreateProductMutation.commit(
+      { name, description, price },
+      ({ CreateProductMutation }) =>
+        CreateProductMutation &&
+        handleResponse(
+          CreateProductMutation.product,
+          CreateProductMutation.error,
+        ),
+
+      error =>
+        showMessage({
+          message: 'Creation failed',
+          description: error.message,
+          type: 'danger',
+          icon: 'info',
+        }),
+    );
   }
 
   return (
@@ -90,23 +128,19 @@ export default function Create() {
           label="Description"
           ref={descriptionRef}
           returnKeyType="next"
-          onSubmitEditing={() => priceRef.current && priceRef.current.focus()}
           value={description}
           onChangeText={setDescription}
         />
 
-        <TInput
-          keyboardType="numeric"
+        <PSlider
           placeholder="How much it cost"
           label="Price"
-          ref={priceRef}
-          returnKeyType="send"
-          onSubmitEditing={handleSubmit}
           value={price}
-          onChangeText={setPrice}
+          step={0.5}
+          onValueChange={(value: number) => setPrice(value)}
         />
 
-        <SubmitButton loading={false} empty={empty} onPress={handleSubmit}>
+        <SubmitButton loading={loading} empty={empty} onPress={handleSubmit}>
           Create Product
         </SubmitButton>
       </Form>

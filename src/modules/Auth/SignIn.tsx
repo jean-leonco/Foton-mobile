@@ -1,5 +1,6 @@
 import React from 'react';
-import localStorage from '@react-native-community/async-storage';
+import { TextInput } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import { useState, useRef, useMemo } from 'react';
 import { showMessage } from 'react-native-flash-message';
 
@@ -18,7 +19,7 @@ import {
 const logo = require('../../assets/logo.png');
 
 export default function SignIn({ navigation }) {
-  const passwordRef = useRef<any>();
+  const passwordRef = useRef<TextInput>();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -34,15 +35,12 @@ export default function SignIn({ navigation }) {
   }, [email, password]);
 
   async function handleResponse(token: string | null, error: string | null) {
+    setLoading(false);
+
     if (token) {
-      await localStorage.setItem('token', token);
-
-      setLoading(false);
-
-      navigation.navigate('Dashboard');
+      await AsyncStorage.setItem('token', token);
+      navigation.navigate('Me');
     } else {
-      setLoading(false);
-
       showMessage({
         message: 'Login failed',
         description: error as string,
@@ -52,12 +50,12 @@ export default function SignIn({ navigation }) {
     }
   }
 
-  async function handleSubmit() {
+  function handleSubmit() {
     if (empty) return;
 
     setLoading(true);
 
-    await UserLoginWithEmailMutation.commit(
+    UserLoginWithEmailMutation.commit(
       { email, password },
       ({ UserLoginWithEmail }) =>
         UserLoginWithEmail &&
@@ -85,7 +83,9 @@ export default function SignIn({ navigation }) {
           placeholder="Your e-mail"
           label="E-mail"
           returnKeyType="next"
-          onSubmitEditing={() => passwordRef.current.focus()}
+          onSubmitEditing={() =>
+            passwordRef.current && passwordRef.current.focus()
+          }
           value={email}
           onChangeText={setEmail}
         />

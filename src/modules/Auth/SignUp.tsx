@@ -1,7 +1,10 @@
 import React from 'react';
-import localStorage from '@react-native-community/async-storage';
+import { TextInput } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import { useState, useRef, useMemo } from 'react';
 import { showMessage } from 'react-native-flash-message';
+
+import UserRegisterWithEmailMutation from './mutation/UserRegisterWithEmailMutation';
 
 import {
   Container,
@@ -13,19 +16,18 @@ import {
   SignLinkText,
 } from './styles';
 
-import UserRegisterWithEmailMutation from './mutation/UserRegisterWithEmailMutation';
-
 const logo = require('../../assets/logo.png');
 
 export default function SignUp({ navigation }) {
-  const passwordRef = useRef<any>();
-  const emailRef = useRef<any>();
+  const passwordRef = useRef<TextInput>();
+  const emailRef = useRef<TextInput>();
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const [empty, setEmpty] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useMemo(() => {
     if (!name || !email || !password) {
@@ -36,9 +38,11 @@ export default function SignUp({ navigation }) {
   }, [name, email, password]);
 
   async function handleResponse(token: string | null, error: string | null) {
+    setLoading(false);
+
     if (token) {
-      await localStorage.setItem('token', token);
-      navigation.navigate('Dashboard');
+      await AsyncStorage.setItem('token', token);
+      navigation.navigate('Me');
     } else {
       showMessage({
         message: 'Registration failed',
@@ -51,6 +55,8 @@ export default function SignUp({ navigation }) {
 
   function handleSubmit() {
     if (empty) return;
+
+    setLoading(true);
 
     UserRegisterWithEmailMutation.commit(
       { name, email, password },
@@ -82,7 +88,7 @@ export default function SignUp({ navigation }) {
           placeholder="Full name"
           label="Name"
           returnKeyType="next"
-          onSubmitEditing={() => emailRef.current.focus()}
+          onSubmitEditing={() => emailRef.current && emailRef.current.focus()}
           value={name}
           onChangeText={setName}
         />
@@ -95,7 +101,9 @@ export default function SignUp({ navigation }) {
           label="E-mail"
           ref={emailRef}
           returnKeyType="next"
-          onSubmitEditing={() => passwordRef.current.focus()}
+          onSubmitEditing={() =>
+            passwordRef.current && passwordRef.current.focus()
+          }
           value={email}
           onChangeText={setEmail}
         />
@@ -111,7 +119,7 @@ export default function SignUp({ navigation }) {
           onChangeText={setPassword}
         />
 
-        <SubmitButton loading={false} empty={empty} onPress={handleSubmit}>
+        <SubmitButton loading={loading} empty={empty} onPress={handleSubmit}>
           Sign up
         </SubmitButton>
       </Form>
