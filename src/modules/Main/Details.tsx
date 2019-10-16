@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+
+import { formatDistance, parseISO, format } from 'date-fns';
 import { QueryRenderer, graphql } from 'react-relay';
+
 import styled from 'styled-components/native';
 
 import env from '../../relay/Environment';
@@ -45,6 +48,11 @@ const Data = styled.Text`
 function Details({ query }) {
   const { product } = query;
 
+  const shapeDate = useCallback(
+    () => format(parseISO(product.createdAt), "MMMM dd', ' yyyy"),
+    [product],
+  );
+
   return (
     <Container>
       <Title>{product.name}</Title>
@@ -61,7 +69,7 @@ function Details({ query }) {
 
       <Info>
         <Statement>Created at: </Statement>
-        <Data>14/05/2001</Data>
+        <Data>{shapeDate()}</Data>
       </Info>
     </Container>
   );
@@ -73,6 +81,7 @@ const query = graphql`
       name
       description
       price
+      createdAt
     }
   }
 `;

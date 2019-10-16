@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Animated } from 'react-native';
 import { RectButton } from 'react-native-gesture-handler';
 
 import { graphql, createFragmentContainer } from 'react-relay';
 
+import { formatDistance, parseISO } from 'date-fns';
 import styled from 'styled-components/native';
 
 //  ### STYLES
@@ -44,6 +45,11 @@ function DashboardList({ navigation, query, relay }) {
 
   const { edges } = query.products;
 
+  const shapeDate = useCallback(
+    date => formatDistance(parseISO(date), new Date()),
+    [edges],
+  );
+
   useEffect(() => {
     Animated.parallel([
       Animated.timing(offset.x, {
@@ -79,7 +85,7 @@ function DashboardList({ navigation, query, relay }) {
       renderItem={({ item }) => (
         <ProductCard onPress={() => handleNavigate(item.node.id)}>
           <Product>{item.node.name}</Product>
-          <CreatedAt>Added 2 days ago</CreatedAt>
+          <CreatedAt>{shapeDate(item.node.createdAt)}</CreatedAt>
         </ProductCard>
       )}
     />
@@ -95,6 +101,7 @@ const DashboardListFragment = createFragmentContainer(DashboardList, {
             id
             name
             description
+            createdAt
           }
         }
         pageInfo {
