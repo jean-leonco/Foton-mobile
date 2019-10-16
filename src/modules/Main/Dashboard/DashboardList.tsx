@@ -1,18 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Animated } from 'react-native';
 import { RectButton } from 'react-native-gesture-handler';
 
-import {
-  NavigationScreenProp,
-  NavigationState,
-  NavigationParams,
-} from 'react-navigation';
-import { graphql } from 'react-relay';
-import { useFragment } from '@entria/relay-experimental';
+import { graphql, createFragmentContainer } from 'react-relay';
 
 import styled from 'styled-components/native';
-
-import { DashboardList_products } from './__generated__/DashboardList_products.graphql';
 
 //  ### STYLES
 
@@ -45,18 +37,13 @@ const offset = new Animated.ValueXY({ x: 250, y: 0 });
 
 const AnimatedList = Animated.createAnimatedComponent(ProductList);
 
-//  ### TYPES
-
-type Props = {
-  products: DashboardList_products;
-  navigation: NavigationScreenProp<NavigationState, NavigationParams>;
-};
-
-const mockData = [{ id: 'dasds5d1a' }, { id: 'dasds5d1a' }];
-
 //  ### JSX
 
-export default function DashboardList(props: Props) {
+function DashboardList({ navigation, query, relay }) {
+  const [refreshing, setRefreshing] = useState(false);
+
+  const { edges } = query.products;
+
   useEffect(() => {
     Animated.parallel([
       Animated.timing(offset.x, {
@@ -73,42 +60,50 @@ export default function DashboardList(props: Props) {
     ]).start();
   }, []);
 
-  const products = useFragment(
-    graphql`
-      fragment DashboardList_products on Query {
-        products(first: 10) @connection(key: "Dashboard_products") {
-          edges {
-            node {
-              id
-              name
-              description
-            }
-          }
-          pageInfo {
-            hasNextPage
-            startCursor
-          }
-        }
-      }
-    `,
-    props.products,
-  );
+  function handleOnEndReached() {}
+
+  function handleOnRefresh() {}
 
   function handleNavigate(id: string) {
-    props.navigation.navigate('Details', { id });
+    navigation.navigate('Details', { id });
   }
 
   return (
     <AnimatedList
       style={[{ transform: [...offset.getTranslateTransform()] }, { opacity }]}
-      data={[1, 2, 3]}
-      keyExtractor={(item: Number) => String(item)}
+      data={edges}
+      keyExtractor={item => item.node.id}
+      onEndReached={handleOnEndReached}
+      onRefresh={handleOnRefresh}
+      refreshing={refreshing}
       renderItem={({ item }) => (
-        <ProductCard onPress={() => handleNavigate(item)}>
-          <Product>A new product</Product>
+        <ProductCard onPress={() => handleNavigate(item.node.id)}>
+          <Product>{item.node.name}</Product>
           <CreatedAt>Added 2 days ago</CreatedAt>
         </ProductCard>
       )}
     />
   );
 }
+
+const DashboardListFragment = createFragmentContainer(DashboardList, {
+  query: graphql`
+    fragment DashboardList_query on Query {
+      products(first: 10) @connection(key: "Dashboard_products") {
+        edges {
+          node {
+            id
+            name
+            description
+          }
+        }
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+      }
+    }
+  `,
+});
+
+export default DashboardListFragment;

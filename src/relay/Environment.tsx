@@ -6,13 +6,33 @@ import {
   Variables,
 } from 'relay-runtime';
 
+import RelayQueryResponseCache from 'relay-runtime/lib/network/RelayQueryResponseCache';
+
+const oneMinute = 60 * 1000;
+const cache = new RelayQueryResponseCache({ size: 250, ttl: oneMinute });
+
 let token: string;
 
 export function setToken(storageToken: string) {
   token = storageToken;
 }
 
-async function fetchQuery(operation: any, variables: Variables): Promise<{}> {
+async function fetchQuery(
+  operation: any,
+  variables: Variables,
+  cacheConfig?: any,
+): Promise<{}> {
+  const queryID = operation.text;
+  const isMutation = operation.operationKind === 'mutation';
+  const isQuery = operation.operationKind === 'query';
+  const forceFetch = cacheConfig && cacheConfig.force;
+
+  const fromCache = cache.get(queryID, variables);
+
+  if (isQuery && fromCache !== null && !forceFetch) {
+    return fromCache;
+  }
+
   //@ts-ignore
   const response = await fetch('http://localhost:5000/graphql', {
     method: 'POST',
@@ -27,7 +47,17 @@ async function fetchQuery(operation: any, variables: Variables): Promise<{}> {
     }),
   });
 
-  return response.json();
+  const json = await response.json();
+
+  if (isQuery && json) {
+    cache.set(queryID, variables, json);
+  }
+
+  if (isMutation) {
+    cache.clear();
+  }
+
+  return json;
 }
 
 const modernEnvironment: Environment = new Environment({

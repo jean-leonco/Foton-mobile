@@ -2,13 +2,11 @@ import React from 'react';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import styled from 'styled-components/native';
 
-import { graphql } from 'react-relay';
-import { useQuery } from '@entria/relay-experimental';
+import { graphql, QueryRenderer } from 'react-relay';
 
 import DashboardSearch from './DashboardSearch';
 import DashboardList from './DashboardList';
-
-import ErrorBoundaryWithRetry from '../../../relay/ErrorBoundaryWithRetry';
+import env from '../../../relay/Environment';
 import ErrorScreen from '../../ErrorScreen';
 import LoadingScreen from '../../LoadingScreen';
 
@@ -29,43 +27,46 @@ const Title = styled.Text`
 //  ### JSX
 
 function DashboardRoot(props) {
-  const data = useQuery(
-    graphql`
-      query DashboardRootQuery {
-        ...DashboardList_products
-      }
-    `,
-    {},
-  );
-
   return (
     <Container>
       <Title>Dashboard</Title>
 
       <DashboardSearch />
 
-      <DashboardList products={data.products} {...props} />
+      <DashboardList {...props} />
     </Container>
   );
 }
 
-function DashboardWrapper(props) {
+const query = graphql`
+  query DashboardRootQuery {
+    ...DashboardList_query
+  }
+`;
+
+function DashboardRootWrapper({ navigation }) {
   return (
     //@ts-ignore
-    <ErrorBoundaryWithRetry
-      fallback={error => <ErrorScreen error={error.message} />}
-    >
-      <React.Suspense fallback={<LoadingScreen />}>
-        <DashboardRoot {...props} />
-      </React.Suspense>
-    </ErrorBoundaryWithRetry>
+    <QueryRenderer
+      environment={env}
+      query={query}
+      render={({ error, props }) => {
+        if (error) {
+          return <ErrorScreen error={error.message} />;
+        } else if (props) {
+          return <DashboardRoot query={props} navigation={navigation} />;
+        }
+
+        return <LoadingScreen />;
+      }}
+    />
   );
 }
 
-export default DashboardWrapper;
-
-DashboardWrapper.navigationOptions = {
+DashboardRootWrapper.navigationOptions = {
   tabBarIcon: ({ tintColor }) => (
     <Icon name="dashboard" size={20} color={tintColor} />
   ),
 };
+
+export default DashboardRootWrapper;
