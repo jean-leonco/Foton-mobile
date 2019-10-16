@@ -1,12 +1,16 @@
 import React from 'react';
-import { useFragment } from '@entria/relay-experimental';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { graphql, RelayProp } from 'react-relay';
 import styled from 'styled-components/native';
 
-import { Dashboard_products } from './__generated__/Dashboard_products.graphql';
+import { graphql } from 'react-relay';
+import { useQuery } from '@entria/relay-experimental';
+
 import DashboardSearch from './DashboardSearch';
 import DashboardList from './DashboardList';
+
+import ErrorBoundaryWithRetry from '../../../relay/ErrorBoundaryWithRetry';
+import ErrorScreen from '../../ErrorScreen';
+import LoadingScreen from '../../LoadingScreen';
 
 //  ### STYLES
 
@@ -22,35 +26,16 @@ const Title = styled.Text`
   color: #333;
 `;
 
-//  ### TYPES
-
-type Props = {
-  relay: RelayProp;
-  products: Dashboard_products;
-};
-
 //  ### JSX
 
-function Dashboard(props: Props) {
-  const products = useFragment(
+function DashboardRoot(props) {
+  const data = useQuery(
     graphql`
-      fragment Dashboard_products on Query {
-        products(first: 10) @connection(key: "Dashboard_products") {
-          edges {
-            node {
-              id
-              name
-              description
-            }
-          }
-          pageInfo {
-            hasNextPage
-            startCursor
-          }
-        }
+      query DashboardRootQuery {
+        ...DashboardList_products
       }
     `,
-    props.products,
+    {},
   );
 
   return (
@@ -59,14 +44,27 @@ function Dashboard(props: Props) {
 
       <DashboardSearch />
 
-      <DashboardList />
+      <DashboardList products={data.products} {...props} />
     </Container>
   );
 }
 
-export default Dashboard;
+function DashboardWrapper(props) {
+  return (
+    //@ts-ignore
+    <ErrorBoundaryWithRetry
+      fallback={error => <ErrorScreen error={error.message} />}
+    >
+      <React.Suspense fallback={<LoadingScreen />}>
+        <DashboardRoot {...props} />
+      </React.Suspense>
+    </ErrorBoundaryWithRetry>
+  );
+}
 
-Dashboard.navigationOptions = {
+export default DashboardWrapper;
+
+DashboardWrapper.navigationOptions = {
   tabBarIcon: ({ tintColor }) => (
     <Icon name="dashboard" size={20} color={tintColor} />
   ),
