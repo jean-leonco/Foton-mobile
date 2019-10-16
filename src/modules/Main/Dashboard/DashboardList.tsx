@@ -1,6 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Animated } from 'react-native';
 import { RectButton } from 'react-native-gesture-handler';
+
+import { graphql, createFragmentContainer } from 'react-relay';
+
+import { formatDistance, parseISO } from 'date-fns';
 import styled from 'styled-components/native';
 
 //  ### STYLES
@@ -36,7 +40,16 @@ const AnimatedList = Animated.createAnimatedComponent(ProductList);
 
 //  ### JSX
 
-export default function DashboardList() {
+function DashboardList({ navigation, query, relay }) {
+  const [refreshing, setRefreshing] = useState(false);
+
+  const { edges } = query.products;
+
+  const shapeDate = useCallback(
+    date => formatDistance(parseISO(date), new Date()),
+    [edges],
+  );
+
   useEffect(() => {
     Animated.parallel([
       Animated.timing(offset.x, {
@@ -53,17 +66,51 @@ export default function DashboardList() {
     ]).start();
   }, []);
 
+  function handleOnEndReached() {}
+
+  function handleOnRefresh() {}
+
+  function handleNavigate(id: string) {
+    navigation.navigate('Details', { id });
+  }
+
   return (
     <AnimatedList
       style={[{ transform: [...offset.getTranslateTransform()] }, { opacity }]}
-      data={[1, 2, 3]}
-      keyExtractor={(item: Number) => String(item)}
+      data={edges}
+      keyExtractor={item => item.node.id}
+      onEndReached={handleOnEndReached}
+      onRefresh={handleOnRefresh}
+      refreshing={refreshing}
       renderItem={({ item }) => (
-        <ProductCard>
-          <Product>A new product</Product>
-          <CreatedAt>Added 2 days ago</CreatedAt>
+        <ProductCard onPress={() => handleNavigate(item.node.id)}>
+          <Product>{item.node.name}</Product>
+          <CreatedAt>{shapeDate(item.node.createdAt)}</CreatedAt>
         </ProductCard>
       )}
     />
   );
 }
+
+const DashboardListFragment = createFragmentContainer(DashboardList, {
+  query: graphql`
+    fragment DashboardList_query on Query {
+      products(first: 10) @connection(key: "Dashboard_products") {
+        edges {
+          node {
+            id
+            name
+            description
+            createdAt
+          }
+        }
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+      }
+    }
+  `,
+});
+
+export default DashboardListFragment;

@@ -1,12 +1,14 @@
 import React from 'react';
-import { useFragment } from '@entria/relay-experimental';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { graphql, RelayProp } from 'react-relay';
 import styled from 'styled-components/native';
 
-import { Dashboard_products } from './__generated__/Dashboard_products.graphql';
+import { graphql, QueryRenderer } from 'react-relay';
+
 import DashboardSearch from './DashboardSearch';
 import DashboardList from './DashboardList';
+import env from '../../../relay/Environment';
+import ErrorScreen from '../../ErrorScreen';
+import LoadingScreen from '../../LoadingScreen';
 
 //  ### STYLES
 
@@ -22,52 +24,49 @@ const Title = styled.Text`
   color: #333;
 `;
 
-//  ### TYPES
-
-type Props = {
-  relay: RelayProp;
-  products: Dashboard_products;
-};
-
 //  ### JSX
 
-function Dashboard(props: Props) {
-  const products = useFragment(
-    graphql`
-      fragment Dashboard_products on Query {
-        products(first: 10) @connection(key: "Dashboard_products") {
-          edges {
-            node {
-              id
-              name
-              description
-            }
-          }
-          pageInfo {
-            hasNextPage
-            startCursor
-          }
-        }
-      }
-    `,
-    props.products,
-  );
-
+function DashboardRoot(props) {
   return (
     <Container>
       <Title>Dashboard</Title>
 
       <DashboardSearch />
 
-      <DashboardList />
+      <DashboardList {...props} />
     </Container>
   );
 }
 
-export default Dashboard;
+const query = graphql`
+  query DashboardRootQuery {
+    ...DashboardList_query
+  }
+`;
 
-Dashboard.navigationOptions = {
+function DashboardRootWrapper({ navigation }) {
+  return (
+    //@ts-ignore
+    <QueryRenderer
+      environment={env}
+      query={query}
+      render={({ error, props }) => {
+        if (error) {
+          return <ErrorScreen error={error.message} />;
+        } else if (props) {
+          return <DashboardRoot query={props} navigation={navigation} />;
+        }
+
+        return <LoadingScreen />;
+      }}
+    />
+  );
+}
+
+DashboardRootWrapper.navigationOptions = {
   tabBarIcon: ({ tintColor }) => (
     <Icon name="dashboard" size={20} color={tintColor} />
   ),
 };
+
+export default DashboardRootWrapper;

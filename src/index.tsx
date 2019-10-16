@@ -4,14 +4,17 @@ import { RelayEnvironmentProvider } from '@entria/relay-experimental';
 
 import './config/ReactotronConfig';
 
-import App from './App';
+import Routes from './routes';
 import environment from './relay/Environment';
+
+import FlashMessage from 'react-native-flash-message';
 
 export default function index() {
   return (
     <RelayEnvironmentProvider environment={environment}>
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
-      <App />
+      <Routes />
+      <FlashMessage position="bottom" floating />
     </RelayEnvironmentProvider>
   );
 }

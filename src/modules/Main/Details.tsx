@@ -1,7 +1,15 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { TouchableOpacity } from 'react-native';
-import styled from 'styled-components/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+
+import { formatDistance, parseISO, format } from 'date-fns';
+import { QueryRenderer, graphql } from 'react-relay';
+
+import styled from 'styled-components/native';
+
+import env from '../../relay/Environment';
+import LoadingScreen from '../LoadingScreen';
+import ErrorScreen from '../ErrorScreen';
 
 //  ### STYLES
 
@@ -37,30 +45,72 @@ const Data = styled.Text`
 
 //  ### JSX
 
-export default function Details() {
+function Details({ query }) {
+  const { product } = query;
+
+  const shapeDate = useCallback(
+    () => format(parseISO(product.createdAt), "MMMM dd', ' yyyy"),
+    [product],
+  );
+
   return (
     <Container>
-      <Title>Product name</Title>
+      <Title>{product.name}</Title>
 
       <Info>
         <Statement>Description: </Statement>
-        <Data>A new Product</Data>
+        <Data>{product.description}</Data>
       </Info>
 
       <Info>
         <Statement>Price: </Statement>
-        <Data>$10.0</Data>
+        <Data>${product.price}</Data>
       </Info>
 
       <Info>
         <Statement>Created at: </Statement>
-        <Data>14/05/2001</Data>
+        <Data>{shapeDate()}</Data>
       </Info>
     </Container>
   );
 }
 
-Details.navigationOptions = ({ navigation }) => ({
+const query = graphql`
+  query DetailsQuery($id: ID!) {
+    product(id: $id) {
+      name
+      description
+      price
+      createdAt
+    }
+  }
+`;
+
+function DetailsWrapper({ navigation }) {
+  const id = navigation.getParam('id');
+
+  return (
+    //@ts-ignore
+    <QueryRenderer
+      environment={env}
+      query={query}
+      variables={{ id }}
+      render={({ error, props }) => {
+        if (error) {
+          return <ErrorScreen error={error.message} />;
+        } else if (props) {
+          return <Details query={props} />;
+        }
+
+        return <LoadingScreen />;
+      }}
+    />
+  );
+}
+
+export default DetailsWrapper;
+
+DetailsWrapper.navigationOptions = ({ navigation }) => ({
   headerTitle: 'Information',
   headerLeft: () => (
     <TouchableOpacity onPress={() => navigation.navigate('Dashboard')}>
