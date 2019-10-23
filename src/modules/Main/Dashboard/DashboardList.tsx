@@ -19,6 +19,7 @@ import styled from 'styled-components/native';
 import { DashboardList_query } from './__generated__/DashboardList_query.graphql';
 
 import SearchInput from '../../SearchInput';
+import Empty from './Empty';
 
 //  ### STYLES
 
@@ -135,6 +136,7 @@ function DashboardList({ navigation, query, relay }: Props) {
             <CreatedAt>{shapeDate(item.node.createdAt)}</CreatedAt>
           </ProductCard>
         )}
+        ListEmptyComponent={<Empty />}
       />
     </>
   );

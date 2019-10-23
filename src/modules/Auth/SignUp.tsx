@@ -67,13 +67,16 @@ export default function SignUp({ navigation }) {
           UserRegisterWithEmail.error,
         ),
 
-      error =>
+      error => {
+        setLoading(false);
+
         showMessage({
           message: 'Registration failed',
           description: error.message,
           type: 'danger',
           icon: 'info',
-        }),
+        });
+      },
     );
   }
 
@@ -122,11 +125,11 @@ export default function SignUp({ navigation }) {
         <SubmitButton loading={loading} empty={empty} onPress={handleSubmit}>
           Sign up
         </SubmitButton>
-      </Form>
 
-      <SignLink onPress={() => navigation.navigate('SignIn')}>
-        <SignLinkText>Back to login</SignLinkText>
-      </SignLink>
+        <SignLink onPress={() => navigation.navigate('SignIn')}>
+          <SignLinkText>Back to login</SignLinkText>
+        </SignLink>
+      </Form>
     </Container>
   );
 }

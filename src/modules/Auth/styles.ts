@@ -3,11 +3,11 @@ import styled from 'styled-components/native';
 import Input from '../Input';
 import Button from '../Button';
 
-export const Container = styled.ScrollView.attrs({
-  showsVerticalScrollIndicator: false,
-  contentContainerStyle: { padding: 20, alignItems: 'center' },
-})`
-  flex: 1;
+export const Container = styled.View`
+  padding: 20px;
+  flex: 1px;
+  align-items: center;
+  justify-content: center;
 `;
 
 export const Logo = styled.Image`
@@ -15,7 +15,7 @@ export const Logo = styled.Image`
   height: 100px;
 `;
 
-export const Form = styled.View`
+export const Form = styled.KeyboardAvoidingView`
   align-self: stretch;
   margin-top: 50px;
 `;
@@ -35,4 +35,5 @@ export const SignLink = styled.TouchableOpacity`
 export const SignLinkText = styled.Text`
   color: #333;
   font-size: 16px;
+  align-self: center;
 `;

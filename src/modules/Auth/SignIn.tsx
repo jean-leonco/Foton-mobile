@@ -61,13 +61,16 @@ export default function SignIn({ navigation }) {
         UserLoginWithEmail &&
         handleResponse(UserLoginWithEmail.token, UserLoginWithEmail.error),
 
-      error =>
+      error => {
+        setLoading(false);
+
         showMessage({
           message: 'Registration failed',
           description: error.message,
           type: 'danger',
           icon: 'info',
-        }),
+        });
+      },
     );
   }
 
@@ -104,11 +107,11 @@ export default function SignIn({ navigation }) {
         <SubmitButton loading={loading} empty={empty} onPress={handleSubmit}>
           Login
         </SubmitButton>
-      </Form>
 
-      <SignLink onPress={() => navigation.navigate('SignUp')}>
-        <SignLinkText>Need an account? Signup</SignLinkText>
-      </SignLink>
+        <SignLink onPress={() => navigation.navigate('SignUp')}>
+          <SignLinkText>Need an account? Signup</SignLinkText>
+        </SignLink>
+      </Form>
     </Container>
   );
 }
