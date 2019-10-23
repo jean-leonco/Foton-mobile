@@ -32,7 +32,7 @@ export default function SliderInput({ style, label, value, ...rest }) {
     <Container style={style}>
       <Header>
         <Label>{label}</Label>
-        <Value>{value}</Value>
+        <Value>$ {value}</Value>
       </Header>
 
       <Slider
@@ -44,7 +44,6 @@ export default function SliderInput({ style, label, value, ...rest }) {
         style={{
           height: 45,
         }}
-        width={600}
       />
     </Container>
   );

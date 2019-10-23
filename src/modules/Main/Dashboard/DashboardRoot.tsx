@@ -47,7 +47,7 @@ function DashboardRootWrapper({ navigation }) {
     //@ts-ignore
     <QueryRenderer
       environment={env}
-      variables={{ count: 5 }}
+      variables={{ count: 10 }}
       query={query}
       render={({ error, props }) => {
         if (error) {

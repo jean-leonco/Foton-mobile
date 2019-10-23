@@ -4,6 +4,7 @@ import Input from '../Input';
 import Button from '../Button';
 
 export const Container = styled.View`
+  background: #fff;
   padding: 20px;
   flex: 1px;
   align-items: center;

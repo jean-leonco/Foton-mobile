@@ -12,6 +12,7 @@ import { showMessage } from 'react-native-flash-message';
 //  ### STYLES
 
 const Container = styled.View`
+  background: #fff;
   flex: 1;
   padding: 20px;
 `;

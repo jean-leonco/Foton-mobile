@@ -94,14 +94,14 @@ function DashboardList({ navigation, query, relay }: Props) {
     if (!relay.hasMore() || relay.isLoading() || endLoading) return;
     setEndLoading(true);
 
-    relay.loadMore(5, () => setEndLoading(false));
+    relay.loadMore(10, () => setEndLoading(false));
   }
 
   function handleOnRefresh() {
     if (relay.isLoading()) return;
     setRefreshing(true);
 
-    relay.refetchConnection(5, () => setRefreshing(false));
+    relay.refetchConnection(10, () => setRefreshing(false));
   }
 
   function handleNavigate(id: string) {
@@ -109,7 +109,7 @@ function DashboardList({ navigation, query, relay }: Props) {
   }
 
   function handleSearch(search: string) {
-    relay.refetchConnection(5, () => {}, { search });
+    relay.refetchConnection(10, () => {}, { search });
   }
 
   return (

@@ -2,6 +2,8 @@
 
 This app is the mobile version of the [Foton challenge](https://github.com/FotonTech/join). Built with react native and relay, it's use the newest in mobile technology.
 
+![screenshots](./preview/preview.png)
+
 ## Getting Started
 
 Choose a folder to save the project and clone the repository:
