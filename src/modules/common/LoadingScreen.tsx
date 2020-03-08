@@ -2,10 +2,7 @@ import React, { useEffect } from 'react';
 import { Animated } from 'react-native';
 import styled from 'styled-components/native';
 
-//@ts-ignore
-import logo from '../assets/logo.png';
-
-//  ### STYLES
+import logo from '../../assets/logo.png';
 
 const Container = styled.SafeAreaView`
   background: #fff;
@@ -16,9 +13,7 @@ const Container = styled.SafeAreaView`
 
 const offset = new Animated.ValueXY({ x: 0, y: 0 });
 
-//  ### JSX
-
-export default function LoadingScreen() {
+const LoadingScreen: React.FC = () => {
   function runAnimation() {
     Animated.sequence([
       Animated.timing(offset.y, {
@@ -50,4 +45,6 @@ export default function LoadingScreen() {
       />
     </Container>
   );
-}
+};
+
+export default LoadingScreen;

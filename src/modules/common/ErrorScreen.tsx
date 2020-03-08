@@ -1,8 +1,6 @@
 import React from 'react';
 import styled from 'styled-components/native';
 
-//  ### STYLES
-
 const Container = styled.SafeAreaView`
   background: #fff;
   padding: 20px;
@@ -24,19 +22,17 @@ const Error = styled.Text`
   font-size: 14px;
 `;
 
-//  ### TYPES
-
 type Props = {
   error: string;
 };
 
-//  ### JSX
-
-export default function ErrorScreen(props: Props) {
+const ErrorScreen: React.FC<Props> = ({ error }) => {
   return (
     <Container>
       <Title>Oops, an error occurred. Try again later</Title>
-      <Error>Error: {props.error}</Error>
+      <Error>Error: {error}</Error>
     </Container>
   );
-}
+};
+
+export default ErrorScreen;

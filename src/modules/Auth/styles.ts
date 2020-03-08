@@ -1,7 +1,7 @@
 import styled from 'styled-components/native';
 
 import Input from '../Input';
-import Button from '../Button';
+import Button from '../common/Button';
 
 export const Container = styled.View`
   background: #fff;

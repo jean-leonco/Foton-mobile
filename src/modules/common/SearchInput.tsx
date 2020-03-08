@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import styled from 'styled-components/native';
-import { RelayPaginationProp } from 'react-relay';
-
-//  ### STYLES
 
 const Actions = styled.View`
   flex-direction: row;
@@ -14,13 +11,12 @@ const Actions = styled.View`
 const Search = styled.View`
   height: 45px;
   padding: 0 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
 
   flex: 1;
   flex-direction: row;
   align-items: center;
-
-  border: 1px solid #ddd;
-  border-radius: 4px;
 `;
 
 const Input = styled.TextInput.attrs({
@@ -43,14 +39,17 @@ const Clear = styled.TouchableOpacity`
   justify-content: center;
 `;
 
-//  ### JSX
+interface Props {
+  handleSearch(input: string): void;
+}
 
-export default function SearchInput({ searchFunction }) {
-  const [search, setSearch] = useState('');
+const SearchInput: React.FC<Props> = ({ handleSearch }) => {
+  const [input, setInput] = useState('');
 
-  useEffect(() => {
-    searchFunction(search);
-  }, [search]);
+  const onChange = (value: string) => {
+    setInput(value);
+    handleSearch(value);
+  };
 
   return (
     <Actions>
@@ -60,14 +59,16 @@ export default function SearchInput({ searchFunction }) {
           placeholder="Search a product"
           autoCorrect={false}
           autoCapitalize="none"
-          value={search}
-          onChangeText={setSearch}
+          value={input}
+          onChangeText={onChange}
         />
       </Search>
 
-      <Clear onPress={() => setSearch('')}>
+      <Clear onPress={() => onChange('')}>
         <Icon name="clear" size={22} color="#fff" />
       </Clear>
     </Actions>
   );
-}
+};
+
+export default SearchInput;

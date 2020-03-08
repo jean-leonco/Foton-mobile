@@ -5,8 +5,9 @@ import {
   Store,
   Variables,
 } from 'relay-runtime';
-
 import RelayQueryResponseCache from 'relay-runtime/lib/network/RelayQueryResponseCache';
+
+import { GRAPHQL_URL } from '../common/config';
 
 const oneMinute = 60 * 1000;
 const cache = new RelayQueryResponseCache({ size: 250, ttl: oneMinute });
@@ -33,8 +34,7 @@ async function fetchQuery(
     return fromCache;
   }
 
-  //@ts-ignore
-  const response = await fetch('http://localhost:5000/graphql', {
+  const response = await fetch(GRAPHQL_URL, {
     method: 'POST',
     headers: {
       Accept: 'application/json',

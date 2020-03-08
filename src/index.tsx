@@ -1,22 +1,27 @@
-import React from 'react';
-import { StatusBar, YellowBox } from 'react-native';
-import { RelayEnvironmentProvider } from '@entria/relay-experimental';
-
-import './config/ReactotronConfig';
+import 'react-native-gesture-handler';
+import React, { Suspense } from 'react';
+import { StatusBar } from 'react-native';
+import { RelayEnvironmentProvider } from 'relay-hooks';
+import FlashMessage from 'react-native-flash-message';
 
 import Routes from './routes';
 import environment from './relay/Environment';
 
-import FlashMessage from 'react-native-flash-message';
+import LoadingScreen from './modules/common/LoadingScreen';
+import ErrorBoundary from './modules/common/ErrorBoundary';
 
-YellowBox.ignoreWarnings(['Warning: Slider']);
-
-export default function index() {
+const App = () => {
   return (
     <RelayEnvironmentProvider environment={environment}>
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
-      <Routes />
       <FlashMessage position="bottom" floating />
+      <ErrorBoundary>
+        <Suspense fallback={<LoadingScreen />}>
+          <Routes />
+        </Suspense>
+      </ErrorBoundary>
     </RelayEnvironmentProvider>
   );
-}
+};
+
+export default App;

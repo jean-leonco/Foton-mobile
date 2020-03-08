@@ -2,9 +2,6 @@ import React, { useEffect } from 'react';
 import { ActivityIndicator, Animated } from 'react-native';
 import { RectButton } from 'react-native-gesture-handler';
 import styled from 'styled-components/native';
-import PropTypes from 'prop-types';
-
-//  ### STYLES
 
 const Container = styled(RectButton)`
   height: 45px;
@@ -25,9 +22,20 @@ const opacity = new Animated.Value(0.5);
 
 const AnimatedContainer = Animated.createAnimatedComponent(Container);
 
-//  ### JSX
+interface Props {
+  style?: any;
+  loading?: boolean;
+  empty?: boolean;
+  onPress(): void;
+}
 
-export default function Button({ style, children, loading, empty, ...rest }) {
+const Button: React.FC<Props> = ({
+  style = [],
+  children,
+  loading,
+  empty,
+  onPress,
+}) => {
   const enable = Animated.timing(opacity, {
     toValue: 1,
     duration: 100,
@@ -51,11 +59,10 @@ export default function Button({ style, children, loading, empty, ...rest }) {
   }, [empty, loading]);
 
   return (
-    //@ts-ignore
     <AnimatedContainer
-      {...rest}
       empty={empty}
       enabled={!loading && !empty}
+      onPress={onPress}
       style={[...style, { opacity }]}
     >
       {loading ? (
@@ -65,13 +72,6 @@ export default function Button({ style, children, loading, empty, ...rest }) {
       )}
     </AnimatedContainer>
   );
-}
-
-Button.propTypes = {
-  children: PropTypes.string.isRequired,
-  loading: PropTypes.bool,
 };
 
-Button.defaultProps = {
-  loading: false,
-};
+export default Button;

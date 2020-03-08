@@ -1,8 +1,8 @@
 import React from 'react';
-import { Slider } from 'react-native';
+import { StyleProp, ViewStyle } from 'react-native';
+import ReactSlider from '@react-native-community/slider';
 import styled from 'styled-components/native';
-
-//  ### STYLES
+import { useFormikContext } from 'formik';
 
 const Container = styled.View`
   flex-direction: column;
@@ -25,18 +25,29 @@ const Value = styled.Text`
   color: #999;
 `;
 
-//  ### JSX
+const Error = styled.Text`
+  color: #ef3d52;
+  font-size: 12px;
+`;
 
-export default function SliderInput({ style, label, value, ...rest }) {
+interface Props {
+  label: string;
+  name: string;
+}
+
+const Slider: React.FC<Props> = ({ label, name }) => {
+  const { values, setFieldValue, errors } = useFormikContext<any>();
+
   return (
-    <Container style={style}>
+    <Container>
       <Header>
         <Label>{label}</Label>
-        <Value>$ {value}</Value>
+        <Value>$ {values[name]}</Value>
       </Header>
 
-      <Slider
-        {...rest}
+      <ReactSlider
+        step={0.5}
+        onValueChange={value => setFieldValue(name, value)}
         maximumValue={100}
         minimumValue={0}
         thumbTintColor="#999"
@@ -45,6 +56,9 @@ export default function SliderInput({ style, label, value, ...rest }) {
           height: 45,
         }}
       />
+      <Error>{errors[name]}</Error>
     </Container>
   );
-}
+};
+
+export default Slider;

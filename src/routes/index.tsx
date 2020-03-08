@@ -1,71 +1,59 @@
-import { createAppContainer, createSwitchNavigator } from 'react-navigation';
-import { createBottomTabNavigator } from 'react-navigation-tabs';
-import { createStackNavigator } from 'react-navigation-stack';
+import React, { useEffect, useState } from 'react';
+import { View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import AsyncStorage from '@react-native-community/async-storage';
 
+import App from './App';
 import SignIn from '../modules/Auth/SignIn';
 import SignUp from '../modules/Auth/SignUp';
+import { setToken } from '../relay/Environment';
+import Details from './Details';
 
-import Dashboard from '../modules/Main/Dashboard/DashboardRoot';
-import Create from '../modules/Main/Create';
+const Stack = createStackNavigator();
 
-import Details from '../modules/Main/Details';
-import Me from '../modules/Main/Me';
+const Routes: React.FC = () => {
+  const [loading, setLoading] = useState(true);
+  const [isSigned, setIsSigned] = useState(false);
 
-const Main = createBottomTabNavigator(
-  {
-    Dashboard,
-    Create,
-  },
-  {
-    resetOnBlur: true,
-    tabBarOptions: {
-      keyboardHidesTabBar: true,
-      activeTintColor: '#4b3bff',
-      inactiveTintColor: '#333',
-      style: {
-        backgroundColor: '#fff',
-        borderTopWidth: 0,
-      },
-    },
-  },
-);
+  useEffect(() => {
+    async function getToken() {
+      setLoading(true);
+      const token = await AsyncStorage.getItem('token');
 
-const Hidden = createStackNavigator(
-  {
-    Details,
-  },
-  {
-    defaultNavigationOptions: {
-      headerTransparent: true,
-      headerTitleStyle: {
-        color: '#333',
-        fontSize: 25,
-        fontWeight: 'bold',
-      },
-      headerLeftContainerStyle: {
-        marginLeft: 10,
-      },
-    },
-  },
-);
+      if (token) {
+        setToken(token as string);
+        setIsSigned(true);
+      } else {
+        setIsSigned(false);
+      }
 
-const Auth = createSwitchNavigator({
-  SignIn,
-  SignUp,
-});
+      setLoading(false);
+    }
+    getToken();
+  }, []);
 
-const App = createAppContainer(
-  createSwitchNavigator(
-    {
-      Me: { screen: Me },
-      Auth,
-      Main,
-      Hidden,
-    },
-    {
-      initialRouteName: 'Me',
-    },
-  ),
-);
+  if (loading) {
+    return <View />;
+  }
 
-export default App;
+  return (
+    <NavigationContainer>
+      {!isSigned ? (
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="SignIn" component={SignIn} />
+          <Stack.Screen name="SignUp" component={SignUp} />
+        </Stack.Navigator>
+      ) : (
+        <Stack.Navigator
+          screenOptions={{ headerShown: false, animationEnabled: false }}
+        >
+          <Stack.Screen name="App" component={App} />
+          <Stack.Screen name="Details" component={Details} />
+        </Stack.Navigator>
+      )}
+    </NavigationContainer>
+  );
+};
+
+export default Routes;
